@@ -10,6 +10,14 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Dashboard UI Phase 3
+- 4 stats cards: total items, collections, favorite items, favorite collections
+- Collections grid (3-col) with color accent, description, item count, and derived type icons
+- Items section with visual All/Pinned/Favorites tabs
+- Pinned items subsection
+- Recent items subsection (all items sorted by lastUsedAt, up to 10)
+- `StatsCard`, `CollectionCard`, and `ItemCard` components added
+
 ### 2026-04-23 — Dashboard UI Phase 2
 - Built collapsible sidebar (icon-only when collapsed on desktop)
 - Item type nav links to `/items/TYPE` with icon and count
