@@ -2,13 +2,29 @@
 
 ## Status
 
+—
+
 ## Goals
 
+—
+
 ## Notes
+
+—
 
 ## History
 
 <!-- Keep this updated. Earliest to Latest -->
+
+### 2026-04-23 — Prisma + Neon PostgreSQL Setup
+- Installed Prisma 7 with `@prisma/adapter-neon` and `@neondatabase/serverless`
+- Created full schema: `User`, `ItemType`, `Item`, `Collection`, `ItemCollection`, `Tag` + NextAuth models (`Account`, `Session`, `VerificationToken`)
+- Added indexes on all foreign keys and frequently queried fields; cascade deletes on all user-owned data
+- Configured `prisma.config.ts` (Prisma 7 pattern — `url` lives in config, not schema)
+- Ran initial migration `20260423211327_init` via `prisma migrate dev` against Neon dev branch
+- Prisma client generated to `generated/prisma/`
+- Added `scripts/test-db.ts` to verify connectivity (requires `ws` for Node.js WebSocket support)
+- Workaround applied: `zeptomatch` CJS shim in `node_modules` to fix Prisma 7.8.0 + Node.js v20 ESM incompatibility
 
 ### 2026-04-23 — Dashboard UI Phase 3
 - 4 stats cards: total items, collections, favorite items, favorite collections
