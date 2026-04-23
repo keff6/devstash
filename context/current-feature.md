@@ -10,6 +10,15 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Dashboard UI Phase 2
+- Built collapsible sidebar (icon-only when collapsed on desktop)
+- Item type nav links to `/items/TYPE` with icon and count
+- Favorite + recent collections listed in sidebar with "View all" link
+- User avatar area at the bottom with name, plan, and settings link
+- Mobile drawer via shadcn Sheet, opened with hamburger button in top bar
+- Desktop toggle uses PanelLeft icon, mobile uses Menu icon (separate buttons per breakpoint)
+- Sidebar state managed via `SidebarContext` (collapsed + mobileOpen)
+
 ### 2026-04-23 — Dashboard UI Phase 1
 - Initialized shadcn/ui (v4.4.0) with Tailwind CSS v4 support
 - Installed shadcn Button and Input components

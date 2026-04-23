@@ -1,13 +1,21 @@
 "use client";
 
-import { PanelLeft, Plus, Search } from "lucide-react";
+import { Menu, PanelLeft, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSidebar } from "./sidebar-context";
 
 export function TopBar() {
+  const { toggle } = useSidebar();
+
   return (
     <header className="flex h-14 items-center gap-3 border-b border-border bg-background px-4">
-      <Button variant="ghost" size="icon" className="shrink-0">
+      {/* Mobile: hamburger to open drawer */}
+      <Button variant="ghost" size="icon" className="shrink-0 md:hidden" onClick={toggle}>
+        <Menu className="h-5 w-5" />
+      </Button>
+      {/* Desktop: collapse/expand sidebar */}
+      <Button variant="ghost" size="icon" className="shrink-0 hidden md:flex" onClick={toggle}>
         <PanelLeft className="h-5 w-5" />
       </Button>
 
