@@ -1,22 +1,23 @@
 # Current Feature
 
-<!-- Feature name and short description -->
-
 ## Status
-
-<!-- Not Started | Started | Completed -->
 
 ## Goals
 
-<!-- Goals and requirements -->
-
 ## Notes
-
-<!-- Any extra notes -->
 
 ## History
 
 <!-- Keep this updated. Earliest to Latest -->
+
+### 2026-04-23 — Dashboard UI Phase 1
+- Initialized shadcn/ui (v4.4.0) with Tailwind CSS v4 support
+- Installed shadcn Button and Input components
+- Added `dark` class to root `<html>` for dark mode by default
+- Created `/dashboard` route with two-column layout (sidebar + main)
+- Built `TopBar` component with sidebar toggle, search input, and "New Item" button (display only)
+- Placeholder `h2` elements for sidebar and main content areas
+- Build passes with no errors
 
 ### 2026-04-22 — Initial Next.js Setup
 - Scaffolded project with Create Next App (Next.js 16, React 19, TypeScript, Tailwind CSS v4)
