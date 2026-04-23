@@ -16,6 +16,15 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Dashboard Collections (Real Data)
+- Created `src/lib/db/collections.ts` with `getCollectionsForDashboard()` and `getDashboardStats()`
+- Collections fetched from Neon DB via Prisma for the demo user; top 6 by newest first
+- Dominant border color derived from the most-used item type in each collection
+- Type icons shown in order of frequency (most common first)
+- Stats cards (total items, collections, favorites) now use live DB counts
+- Dashboard `page.tsx` made async; collections + stats fetched in parallel via `Promise.all`
+- Items section (pinned/recent) remains on mock data — to be replaced in a future feature
+
 ### 2026-04-23 — Database Seed Script
 - Added `password String?` to `User` model; migration `20260423213912_add_user_password` applied
 - Created `prisma/seed.ts` — idempotent, cleans previous seed data before re-running

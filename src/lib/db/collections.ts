@@ -1,0 +1,91 @@
+import { prisma } from "@/lib/prisma"
+
+const DEMO_EMAIL = "demo@devstash.io"
+
+type ItemTypeInfo = {
+  id: string
+  icon: string
+  color: string
+}
+
+export type CollectionWithTypes = {
+  id: string
+  name: string
+  description: string | null
+  isFavorite: boolean
+  itemCount: number
+  dominantColor: string
+  itemTypes: ItemTypeInfo[]
+}
+
+export type DashboardStats = {
+  totalItems: number
+  totalCollections: number
+  favoriteItems: number
+  favoriteCollections: number
+}
+
+export async function getCollectionsForDashboard(): Promise<CollectionWithTypes[]> {
+  const collections = await prisma.collection.findMany({
+    where: { user: { email: DEMO_EMAIL } },
+    include: {
+      items: {
+        include: {
+          item: {
+            include: { itemType: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  })
+
+  return collections.map((col) => {
+    const typeCounts = new Map<string, { type: ItemTypeInfo; count: number }>()
+
+    for (const ic of col.items) {
+      const t = ic.item.itemType
+      const entry = typeCounts.get(t.id)
+      if (entry) {
+        entry.count++
+      } else {
+        typeCounts.set(t.id, { type: { id: t.id, icon: t.icon, color: t.color }, count: 1 })
+      }
+    }
+
+    const sorted = [...typeCounts.values()].sort((a, b) => b.count - a.count)
+    const dominantColor = sorted[0]?.type.color ?? "#6b7280"
+    const itemTypes = sorted.map((v) => v.type)
+
+    return {
+      id: col.id,
+      name: col.name,
+      description: col.description,
+      isFavorite: col.isFavorite,
+      itemCount: col.items.length,
+      dominantColor,
+      itemTypes,
+    }
+  })
+}
+
+export async function getDashboardStats(): Promise<DashboardStats> {
+  const user = await prisma.user.findUnique({
+    where: { email: DEMO_EMAIL },
+    select: { id: true },
+  })
+
+  if (!user) {
+    return { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 }
+  }
+
+  const [totalItems, totalCollections, favoriteItems, favoriteCollections] = await Promise.all([
+    prisma.item.count({ where: { userId: user.id } }),
+    prisma.collection.count({ where: { userId: user.id } }),
+    prisma.item.count({ where: { userId: user.id, isFavorite: true } }),
+    prisma.collection.count({ where: { userId: user.id, isFavorite: true } }),
+  ])
+
+  return { totalItems, totalCollections, favoriteItems, favoriteCollections }
+}

@@ -4,31 +4,23 @@ import {
   Pin,
   Star,
 } from "lucide-react";
-import { mockCollections, mockItems, mockItemTypes } from "@/lib/mock-data";
+import { mockItems, mockItemTypes } from "@/lib/mock-data";
+import { getCollectionsForDashboard, getDashboardStats } from "@/lib/db/collections";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { CollectionCard } from "@/components/dashboard/collection-card";
 import { ItemCard } from "@/components/dashboard/item-card";
-
-const totalItems = mockItemTypes.reduce((sum, t) => sum + t.count, 0);
-const totalCollections = mockCollections.length;
-const favoriteItems = mockItems.filter((i) => i.isFavorite).length;
-const favoriteCollections = mockCollections.filter((c) => c.isFavorite).length;
-
-const collectionsWithTypes = mockCollections.map((col) => {
-  const items = mockItems.filter((item) => item.collectionIds.includes(col.id));
-  const seenTypeIds = new Set<string>();
-  const types = items
-    .map((item) => mockItemTypes.find((t) => t.id === item.itemTypeId))
-    .filter((t): t is NonNullable<typeof t> => !!t && !seenTypeIds.has(t.id) && !!seenTypeIds.add(t.id));
-  return { ...col, itemTypes: types };
-});
 
 const pinnedItems = mockItems.filter((i) => i.isPinned);
 const recentItems = [...mockItems]
   .sort((a, b) => new Date(b.lastUsedAt ?? 0).getTime() - new Date(a.lastUsedAt ?? 0).getTime())
   .slice(0, 10);
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [collectionsWithTypes, stats] = await Promise.all([
+    getCollectionsForDashboard(),
+    getDashboardStats(),
+  ]);
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -39,10 +31,10 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard label="Total Items" value={totalItems} icon={Archive} iconColor="#3b82f6" />
-        <StatsCard label="Collections" value={totalCollections} icon={FolderOpen} iconColor="#8b5cf6" />
-        <StatsCard label="Favorite Items" value={favoriteItems} icon={Star} iconColor="#f59e0b" />
-        <StatsCard label="Favorite Collections" value={favoriteCollections} icon={Star} iconColor="#10b981" />
+        <StatsCard label="Total Items" value={stats.totalItems} icon={Archive} iconColor="#3b82f6" />
+        <StatsCard label="Collections" value={stats.totalCollections} icon={FolderOpen} iconColor="#8b5cf6" />
+        <StatsCard label="Favorite Items" value={stats.favoriteItems} icon={Star} iconColor="#f59e0b" />
+        <StatsCard label="Favorite Collections" value={stats.favoriteCollections} icon={Star} iconColor="#10b981" />
       </div>
 
       {/* Collections */}
@@ -61,7 +53,7 @@ export default function DashboardPage() {
             <CollectionCard
               key={col.id}
               name={col.name}
-              description={col.description ?? null}
+              description={col.description}
               itemCount={col.itemCount}
               isFavorite={col.isFavorite}
               dominantColor={col.dominantColor}
