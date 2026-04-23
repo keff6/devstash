@@ -292,6 +292,13 @@ ItemCollection       (join table)
 - Syntax highlighting in code blocks
 - References: [Notion](https://notion.so), [Linear](https://linear.app), [Raycast](https://www.raycast.com)
 
+### Screenshots
+
+Refer to the screenshots below for the dashboard ui design. It does not have to be exact, just a reference:
+
+- @context/screenshots/dashboard-ui.png
+- @context/screenshots/dashboard-ui-drawer.png
+
 ### Micro-interactions
 
 - Smooth drawer transitions
