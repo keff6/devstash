@@ -16,6 +16,15 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Dashboard Items (Real Data)
+- Created `src/lib/db/items.ts` with `getPinnedItems()` and `getRecentItems(limit)`
+- Items typed with `Prisma.ItemGetPayload` using a shared `itemInclude` constant; mapped to `ItemForCard`
+- Pinned section hidden when no pinned items exist
+- Recent items ordered by `lastUsedAt desc nulls last`
+- Items count badge in section header uses `stats.totalItems` from existing DB query
+- All four dashboard fetches (collections, stats, pinned, recent) run in a single `Promise.all`
+- Mock data imports fully removed from `page.tsx`
+
 ### 2026-04-23 — Dashboard Collections (Real Data)
 - Created `src/lib/db/collections.ts` with `getCollectionsForDashboard()` and `getDashboardStats()`
 - Collections fetched from Neon DB via Prisma for the demo user; top 6 by newest first

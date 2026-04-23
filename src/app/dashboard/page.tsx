@@ -4,21 +4,18 @@ import {
   Pin,
   Star,
 } from "lucide-react";
-import { mockItems, mockItemTypes } from "@/lib/mock-data";
 import { getCollectionsForDashboard, getDashboardStats } from "@/lib/db/collections";
+import { getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { CollectionCard } from "@/components/dashboard/collection-card";
 import { ItemCard } from "@/components/dashboard/item-card";
 
-const pinnedItems = mockItems.filter((i) => i.isPinned);
-const recentItems = [...mockItems]
-  .sort((a, b) => new Date(b.lastUsedAt ?? 0).getTime() - new Date(a.lastUsedAt ?? 0).getTime())
-  .slice(0, 10);
-
 export default async function DashboardPage() {
-  const [collectionsWithTypes, stats] = await Promise.all([
+  const [collectionsWithTypes, stats, pinnedItems, recentItems] = await Promise.all([
     getCollectionsForDashboard(),
     getDashboardStats(),
+    getPinnedItems(),
+    getRecentItems(),
   ]);
 
   return (
@@ -70,7 +67,7 @@ export default async function DashboardPage() {
             <Archive className="h-4 w-4 text-muted-foreground" />
             <h2 className="font-semibold">Items</h2>
             <span className="text-xs bg-muted text-muted-foreground rounded-full px-2 py-0.5">
-              {mockItems.length}
+              {stats.totalItems}
             </span>
           </div>
           <div className="flex items-center gap-1 rounded-lg border border-border p-1">
@@ -97,21 +94,18 @@ export default async function DashboardPage() {
               <span className="text-xs font-medium text-muted-foreground">Pinned</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {pinnedItems.map((item) => {
-                const type = mockItemTypes.find((t) => t.id === item.itemTypeId)!;
-                return (
-                  <ItemCard
-                    key={item.id}
-                    title={item.title}
-                    typeIcon={type.icon}
-                    typeColor={type.color}
-                    typeName={type.name}
-                    tags={item.tags}
-                    isPinned={item.isPinned}
-                    isFavorite={item.isFavorite}
-                  />
-                );
-              })}
+              {pinnedItems.map((item) => (
+                <ItemCard
+                  key={item.id}
+                  title={item.title}
+                  typeIcon={item.typeIcon}
+                  typeColor={item.typeColor}
+                  typeName={item.typeName}
+                  tags={item.tags}
+                  isPinned={item.isPinned}
+                  isFavorite={item.isFavorite}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -122,21 +116,18 @@ export default async function DashboardPage() {
             <span className="text-xs font-medium text-muted-foreground">Recent</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {recentItems.map((item) => {
-              const type = mockItemTypes.find((t) => t.id === item.itemTypeId)!;
-              return (
-                <ItemCard
-                  key={item.id}
-                  title={item.title}
-                  typeIcon={type.icon}
-                  typeColor={type.color}
-                  typeName={type.name}
-                  tags={item.tags}
-                  isPinned={item.isPinned}
-                  isFavorite={item.isFavorite}
-                />
-              );
-            })}
+            {recentItems.map((item) => (
+              <ItemCard
+                key={item.id}
+                title={item.title}
+                typeIcon={item.typeIcon}
+                typeColor={item.typeColor}
+                typeName={item.typeName}
+                tags={item.tags}
+                isPinned={item.isPinned}
+                isFavorite={item.isFavorite}
+              />
+            ))}
           </div>
         </div>
       </section>
