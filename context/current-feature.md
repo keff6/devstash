@@ -16,6 +16,15 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Database Seed Script
+- Added `password String?` to `User` model; migration `20260423213912_add_user_password` applied
+- Created `prisma/seed.ts` — idempotent, cleans previous seed data before re-running
+- Demo user: `demo@devstash.io` / `12345678` (bcryptjs, 12 rounds)
+- Seeded 7 system item types (snippet, prompt, command, note, file, image, link) with Lucide icon names
+- 5 collections with 18 items: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet + 1 command + 2 links), Terminal Commands (4 commands), Design Resources (4 links)
+- Added `db:seed` script to `package.json` and `prisma.seed` pointer so both `npm run db:seed` and `prisma db seed` work
+- Installed `bcryptjs` + `@types/bcryptjs`
+
 ### 2026-04-23 — Prisma + Neon PostgreSQL Setup
 - Installed Prisma 7 with `@prisma/adapter-neon` and `@neondatabase/serverless`
 - Created full schema: `User`, `ItemType`, `Item`, `Collection`, `ItemCollection`, `Tag` + NextAuth models (`Account`, `Session`, `VerificationToken`)
