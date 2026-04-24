@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar-context";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Code,
@@ -102,7 +103,13 @@ function SidebarContent({
                     {!collapsed && (
                       <>
                         <span className="flex-1 capitalize">{type.name}s</span>
-                        <span className="text-xs text-muted-foreground">{type.count}</span>
+                        {(type.name === "file" || type.name === "image") ? (
+                          <Badge variant="outline" className="h-4 px-1 text-[10px] font-semibold text-muted-foreground border-muted-foreground/30">
+                            PRO
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">{type.count}</span>
+                        )}
                       </>
                     )}
                   </Link>
