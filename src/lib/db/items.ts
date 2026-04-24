@@ -3,6 +3,52 @@ import type { Prisma } from "../../../generated/prisma/client"
 
 const DEMO_EMAIL = "demo@devstash.io"
 
+export type ItemTypeForSidebar = {
+  id: string
+  name: string
+  icon: string
+  color: string
+  count: number
+}
+
+export async function getItemTypesWithCounts(): Promise<ItemTypeForSidebar[]> {
+  const user = await prisma.user.findUnique({
+    where: { email: DEMO_EMAIL },
+    select: { id: true },
+  })
+
+  if (!user) return []
+
+  const TYPE_ORDER = ["snippet", "prompt", "command", "note", "file", "image", "link"]
+
+  const [itemTypes, counts] = await Promise.all([
+    prisma.itemType.findMany({
+      where: { isSystem: true },
+    }),
+    prisma.item.groupBy({
+      by: ["itemTypeId"],
+      where: { userId: user.id },
+      _count: { id: true },
+    }),
+  ])
+
+  const countMap = new Map(counts.map((c) => [c.itemTypeId, c._count.id]))
+
+  return itemTypes
+    .sort((a, b) => {
+      const ai = TYPE_ORDER.indexOf(a.name)
+      const bi = TYPE_ORDER.indexOf(b.name)
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+    })
+    .map((t) => ({
+    id: t.id,
+    name: t.name,
+    icon: t.icon,
+    color: t.color,
+    count: countMap.get(t.id) ?? 0,
+  }))
+}
+
 const itemInclude = {
   itemType: true,
   tags: true,
