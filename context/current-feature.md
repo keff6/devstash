@@ -16,6 +16,15 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-23 — Stats & Sidebar (Real Data)
+- Added `getItemTypesWithCounts()` to `src/lib/db/items.ts` — fetches system types + per-user item counts via `groupBy`; sorted by custom order (snippets, prompts, commands, notes, files, images, links)
+- Added `getSidebarCollections()` to `src/lib/db/collections.ts` — favorites first then recent, up to 5, with dominant color and total count
+- Made `layout.tsx` async; fetches item types, sidebar collections, and demo user in parallel
+- Sidebar accepts `SidebarDataProps` from layout instead of using mock data
+- Collections show a colored circle dot (dominant type color); favorites additionally show a star badge
+- "View all collections (N)" link uses live count
+- Removed Help & Support button from sidebar
+
 ### 2026-04-23 — Dashboard Items (Real Data)
 - Created `src/lib/db/items.ts` with `getPinnedItems()` and `getRecentItems(limit)`
 - Items typed with `Prisma.ItemGetPayload` using a shared `itemInclude` constant; mapped to `ItemForCard`

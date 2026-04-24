@@ -70,6 +70,54 @@ export async function getCollectionsForDashboard(): Promise<CollectionWithTypes[
   })
 }
 
+export type SidebarCollection = {
+  id: string
+  name: string
+  isFavorite: boolean
+  dominantColor: string
+}
+
+export type SidebarCollectionsData = {
+  collections: SidebarCollection[]
+  totalCount: number
+}
+
+export async function getSidebarCollections(): Promise<SidebarCollectionsData> {
+  const [collections, totalCount] = await Promise.all([
+    prisma.collection.findMany({
+      where: { user: { email: DEMO_EMAIL } },
+      include: {
+        items: {
+          include: { item: { include: { itemType: true } } },
+        },
+      },
+      orderBy: [{ isFavorite: "desc" }, { createdAt: "desc" }],
+      take: 5,
+    }),
+    prisma.collection.count({ where: { user: { email: DEMO_EMAIL } } }),
+  ])
+
+  return {
+    collections: collections.map((col) => {
+      const typeCounts = new Map<string, { color: string; count: number }>()
+      for (const ic of col.items) {
+        const t = ic.item.itemType
+        const entry = typeCounts.get(t.id)
+        if (entry) entry.count++
+        else typeCounts.set(t.id, { color: t.color, count: 1 })
+      }
+      const dominant = [...typeCounts.values()].sort((a, b) => b.count - a.count)[0]
+      return {
+        id: col.id,
+        name: col.name,
+        isFavorite: col.isFavorite,
+        dominantColor: dominant?.color ?? "#6b7280",
+      }
+    }),
+    totalCount,
+  }
+}
+
 export async function getDashboardStats(): Promise<DashboardStats> {
   const user = await prisma.user.findUnique({
     where: { email: DEMO_EMAIL },

@@ -9,14 +9,11 @@ import {
   Link as LinkIcon,
   File,
   Image as ImageIcon,
-  FolderOpen,
-  HelpCircle,
   Settings,
   Star,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mockCollections, mockItemTypes, mockUser } from "@/lib/mock-data";
 import { useSidebar } from "./sidebar-context";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -30,13 +27,40 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Image: ImageIcon,
 };
 
-const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-const recentCollections = mockCollections
-  .filter((c) => !c.isFavorite)
-  .slice(0, 2);
-const sidebarCollections = [...favoriteCollections, ...recentCollections].slice(0, 5);
+interface ItemTypeItem {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  count: number;
+}
 
-function SidebarContent({ collapsed }: { collapsed: boolean }) {
+interface SidebarCollectionItem {
+  id: string;
+  name: string;
+  isFavorite: boolean;
+  dominantColor: string;
+}
+
+interface SidebarUser {
+  name: string | null;
+  isPro: boolean;
+}
+
+interface SidebarDataProps {
+  itemTypes: ItemTypeItem[];
+  collections: SidebarCollectionItem[];
+  collectionCount: number;
+  user: SidebarUser;
+}
+
+function SidebarContent({
+  collapsed,
+  itemTypes,
+  collections,
+  collectionCount,
+  user,
+}: { collapsed: boolean } & SidebarDataProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Logo */}
@@ -62,7 +86,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
             </p>
           )}
           <ul className="space-y-0.5">
-            {mockItemTypes.map((type) => {
+            {itemTypes.map((type) => {
               const Icon = ICON_MAP[type.icon] ?? File;
               return (
                 <li key={type.id}>
@@ -96,7 +120,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
             </p>
           )}
           <ul className="space-y-0.5">
-            {sidebarCollections.map((col) => (
+            {collections.map((col) => (
               <li key={col.id}>
                 <Link
                   href={`/collections/${col.id}`}
@@ -106,11 +130,16 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
                   )}
                   title={collapsed ? col.name : undefined}
                 >
-                  <FolderOpen className="h-4 w-4 shrink-0" style={{ color: col.dominantColor }} />
+                  <div
+                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: col.dominantColor }}
+                  />
                   {!collapsed && (
                     <>
                       <span className="flex-1 truncate">{col.name}</span>
-                      {col.isFavorite && <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />}
+                      {col.isFavorite && (
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      )}
                     </>
                   )}
                 </Link>
@@ -122,7 +151,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
               href="/collections"
               className="mt-1 flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
-              View all ({mockCollections.length})
+              View all collections ({collectionCount})
               <ChevronRight className="h-3 w-3" />
             </Link>
           )}
@@ -131,18 +160,6 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
 
       {/* Bottom */}
       <div className="border-t border-border px-2 py-3 space-y-0.5">
-        <Link
-          href="/help"
-          className={cn(
-            "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
-            collapsed && "justify-center"
-          )}
-          title={collapsed ? "Help & Support" : undefined}
-        >
-          <HelpCircle className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>Help &amp; Support</span>}
-        </Link>
-
         <div
           className={cn(
             "flex items-center gap-2.5 rounded-md px-2 py-1.5",
@@ -150,14 +167,14 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
           )}
         >
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold uppercase">
-            {mockUser.name.charAt(0)}
+            {user.name?.charAt(0) ?? "D"}
           </div>
           {!collapsed && (
             <>
               <div className="flex-1 min-w-0 leading-tight">
-                <p className="text-sm font-medium truncate">{mockUser.name}</p>
+                <p className="text-sm font-medium truncate">{user.name}</p>
                 <p className="text-[11px] text-muted-foreground">
-                  {mockUser.isPro ? "Pro" : "Free Plan"}
+                  {user.isPro ? "Pro" : "Free Plan"}
                 </p>
               </div>
               <Link href="/settings" className="text-muted-foreground hover:text-foreground">
@@ -171,7 +188,7 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar(props: SidebarDataProps) {
   const { collapsed } = useSidebar();
 
   return (
@@ -183,21 +200,19 @@ export function Sidebar() {
           collapsed ? "w-14" : "w-60"
         )}
       >
-        <SidebarContent collapsed={collapsed} />
+        <SidebarContent collapsed={collapsed} {...props} />
       </aside>
-
-      {/* Mobile: rendered via MobileSidebar below */}
     </>
   );
 }
 
-export function MobileSidebar() {
+export function MobileSidebar(props: SidebarDataProps) {
   const { mobileOpen, closeMobile } = useSidebar();
 
   return (
     <Sheet open={mobileOpen} onOpenChange={closeMobile}>
       <SheetContent side="left" className="w-60 p-0 bg-background">
-        <SidebarContent collapsed={false} />
+        <SidebarContent collapsed={false} {...props} />
       </SheetContent>
     </Sheet>
   );
