@@ -16,6 +16,13 @@
 
 <!-- Keep this updated. Earliest to Latest -->
 
+### 2026-04-24 — Add Pro Badge to Sidebar
+- Installed shadcn/ui Badge component (`src/components/ui/badge.tsx`)
+- Added `PRO` badge next to `files` and `images` item types in the sidebar
+- Badge uses `outline` variant — muted border/text for a clean, subtle appearance
+- Badge only renders in expanded sidebar mode; icon-only collapsed view is unaffected
+- Item count is replaced by the badge for Pro-only types; all other types retain their count
+
 ### 2026-04-23 — Stats & Sidebar (Real Data)
 - Added `getItemTypesWithCounts()` to `src/lib/db/items.ts` — fetches system types + per-user item counts via `groupBy`; sorted by custom order (snippets, prompts, commands, notes, files, images, links)
 - Added `getSidebarCollections()` to `src/lib/db/collections.ts` — favorites first then recent, up to 5, with dominant color and total count
