@@ -1,23 +1,5 @@
-import {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image as ImageIcon,
-  Star,
-} from "lucide-react";
-
-const ICON_MAP: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image: ImageIcon,
-};
+import { File, Star } from "lucide-react";
+import { ICON_MAP } from "@/lib/icon-map";
 
 interface ItemType {
   id: string;

@@ -1,32 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image as ImageIcon,
-  Settings,
-  Star,
-  ChevronRight,
-} from "lucide-react";
+import { Code, File, Settings, Star, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar-context";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-
-const ICON_MAP: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image: ImageIcon,
-};
+import { ICON_MAP } from "@/lib/icon-map";
 
 interface ItemTypeItem {
   id: string;

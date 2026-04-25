@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma"
-
-const DEMO_EMAIL = "demo@devstash.io"
+import { DEMO_EMAIL } from "@/lib/constants"
 
 type ItemTypeInfo = {
   id: string
@@ -119,20 +118,11 @@ export async function getSidebarCollections(): Promise<SidebarCollectionsData> {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const user = await prisma.user.findUnique({
-    where: { email: DEMO_EMAIL },
-    select: { id: true },
-  })
-
-  if (!user) {
-    return { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 }
-  }
-
   const [totalItems, totalCollections, favoriteItems, favoriteCollections] = await Promise.all([
-    prisma.item.count({ where: { userId: user.id } }),
-    prisma.collection.count({ where: { userId: user.id } }),
-    prisma.item.count({ where: { userId: user.id, isFavorite: true } }),
-    prisma.collection.count({ where: { userId: user.id, isFavorite: true } }),
+    prisma.item.count({ where: { user: { email: DEMO_EMAIL } } }),
+    prisma.collection.count({ where: { user: { email: DEMO_EMAIL } } }),
+    prisma.item.count({ where: { user: { email: DEMO_EMAIL }, isFavorite: true } }),
+    prisma.collection.count({ where: { user: { email: DEMO_EMAIL }, isFavorite: true } }),
   ])
 
   return { totalItems, totalCollections, favoriteItems, favoriteCollections }

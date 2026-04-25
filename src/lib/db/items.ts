@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import type { Prisma } from "../../../generated/prisma/client"
-
-const DEMO_EMAIL = "demo@devstash.io"
+import { DEMO_EMAIL } from "@/lib/constants"
 
 export type ItemTypeForSidebar = {
   id: string
@@ -12,13 +11,6 @@ export type ItemTypeForSidebar = {
 }
 
 export async function getItemTypesWithCounts(): Promise<ItemTypeForSidebar[]> {
-  const user = await prisma.user.findUnique({
-    where: { email: DEMO_EMAIL },
-    select: { id: true },
-  })
-
-  if (!user) return []
-
   const TYPE_ORDER = ["snippet", "prompt", "command", "note", "file", "image", "link"]
 
   const [itemTypes, counts] = await Promise.all([
@@ -27,7 +19,7 @@ export async function getItemTypesWithCounts(): Promise<ItemTypeForSidebar[]> {
     }),
     prisma.item.groupBy({
       by: ["itemTypeId"],
-      where: { userId: user.id },
+      where: { user: { email: DEMO_EMAIL } },
       _count: { id: true },
     }),
   ])

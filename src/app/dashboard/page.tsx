@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Archive,
   FolderOpen,
@@ -41,9 +42,9 @@ export default async function DashboardPage() {
             <FolderOpen className="h-4 w-4 text-muted-foreground" />
             <h2 className="font-semibold">Collections</h2>
           </div>
-          <a href="/collections" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/collections" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             View All
-          </a>
+          </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {collectionsWithTypes.map((col) => (

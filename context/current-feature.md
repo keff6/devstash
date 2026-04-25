@@ -2,15 +2,24 @@
 
 ## Status
 
-—
+In Progress
 
 ## Goals
 
-—
+Fix quick-win issues surfaced by the code audit — all low-risk, small-scope changes with no new features.
+
+1. **Fix circular CSS variable** — `--font-sans: var(--font-sans)` in `globals.css` is a self-reference that silently empties the variable; change it to `var(--font-geist-sans)` so Geist Sans is actually applied.
+2. **Fix internal `<a>` → `<Link>`** — `<a href="/collections">` in `dashboard/page.tsx` causes a full-page reload; replace with Next.js `<Link>`.
+3. **Add `tsx` to devDependencies** — the `db:seed` script calls `tsx` but it isn't listed as a dependency; add it so clean installs don't break.
+4. **Fix sequential DB round-trips** — `getDashboardStats` (collections.ts) and `getItemTypesWithCounts` (items.ts) both fetch a `userId` first, then fire parallel counts. Rewrite both to use `where: { user: { email: DEMO_EMAIL } }` directly, eliminating the extra round-trip.
+5. **Extract shared `ICON_MAP`** — identical `ICON_MAP` objects are copy-pasted into `sidebar.tsx`, `collection-card.tsx`, and `item-card.tsx`; extract to `src/lib/icon-map.ts` and import from there.
 
 ## Notes
 
-—
+- These are purely fixes/cleanup — no behavior changes visible to the user except the font rendering correction.
+- The sidebar `toggle()` Critical issue is intentionally excluded; it requires component refactoring and UI testing, so it deserves its own feature branch.
+- The `ItemCollection` missing index is also excluded; it requires a Prisma migration.
+- `DEMO_EMAIL` deduplication (Low) is folded into item 4 as a natural by-product.
 
 ## History
 
